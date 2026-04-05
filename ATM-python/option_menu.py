@@ -32,6 +32,10 @@ class OptionMenu:
     # ------------------------------------------------------------------
     # Select Account Type (Checking or Savings)
     # ------------------------------------------------------------------
+    def get_account_statement(self, acc_type):
+        print("\n--- Account Statement ---")
+        print("Checking Balance: " + self._format_money(acc_type.get_checking_balance()))
+        print("Savings Balance: " + self._format_money(acc_type.get_saving_balance()))
 
     def get_account_type(self, acc):
         while True:
@@ -39,13 +43,16 @@ class OptionMenu:
                 print("\nSelect the account you want to access: ")
                 print(" Type 1 - Checking Account")
                 print(" Type 2 - Savings Account")
-                print(" Type 3 - Exit")
+                print(" Type 3 - View Statement")
+                print(" Type 4 - Exit")
                 selection = int(input("\nChoice: "))
                 if selection == 1:
                     self.get_checking(acc)
                 elif selection == 2:
                     self.get_saving(acc)
                 elif selection == 3:
+                    self.get_account_statement(acc)
+                elif selection == 4:
                     return
                 else:
                     print("\nInvalid Choice.")
