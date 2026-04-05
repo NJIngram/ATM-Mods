@@ -9,11 +9,12 @@ logging.basicConfig(
 class Account:
     """Represents a bank account with checking and savings balances."""
 
-    def __init__(self, customer_number=0, pin_number=0, checking_balance=0.0, saving_balance=0.0):
+    def __init__(self, customer_number=0, pin_number=0, checking_balance=0.0, saving_balance=0.0, transaction_history=None):
         self._customer_number = customer_number
         self._pin_number = pin_number
         self._checking_balance = checking_balance
         self._saving_balance = saving_balance
+        self._transaction_history = transaction_history if transaction_history is not None else []
 
     # ------------------------------------------------------------------
     # Getters and Setters
@@ -39,38 +40,56 @@ class Account:
     def get_saving_balance(self):
         return self._saving_balance
 
+    def get_transaction_history(self):
+        return self._transaction_history
+
     # ------------------------------------------------------------------
     # Balance Calculation Methods
     # ------------------------------------------------------------------
 
+    def _record(self, entry):
+        self._transaction_history.append(entry)
+
     def calc_checking_withdraw(self, amount):
         self._checking_balance -= amount
+        entry = f"Checking Withdraw | Amount: {self._format_money(amount)} | New Balance: {self._format_money(self._checking_balance)}"
+        self._record(entry)
         logging.info(f"Customer {self._customer_number} withdrew {self._format_money(amount)} from checking account. New balance: {self._format_money(self._checking_balance)}")
         return self._checking_balance
 
     def calc_saving_withdraw(self, amount):
         self._saving_balance -= amount
+        entry = f"Saving Withdraw | Amount: {self._format_money(amount)} | New Balance: {self._format_money(self._saving_balance)}"
+        self._record(entry)
         logging.info(f"Customer {self._customer_number} withdrew {self._format_money(amount)} from savings account. New balance: {self._format_money(self._saving_balance)}")
         return self._saving_balance
 
     def calc_checking_deposit(self, amount):
         self._checking_balance += amount
+        entry = f"Checking Deposit | Amount: {self._format_money(amount)} | New Balance: {self._format_money(self._checking_balance)}"
+        self._record(entry)
         logging.info(f"Customer {self._customer_number} deposited {self._format_money(amount)} into checking account. New balance: {self._format_money(self._checking_balance)}")
         return self._checking_balance
 
     def calc_saving_deposit(self, amount):
         self._saving_balance += amount
+        entry = f"Saving Deposit | Amount: {self._format_money(amount)} | New Balance: {self._format_money(self._saving_balance)}"
+        self._record(entry)
         logging.info(f"Customer {self._customer_number} deposited {self._format_money(amount)} into savings account. New balance: {self._format_money(self._saving_balance)}")
         return self._saving_balance
 
     def calc_check_transfer(self, amount):
         self._checking_balance -= amount
         self._saving_balance += amount
+        entry = f"Transfer Checking -> Saving | Amount: {self._format_money(amount)} | Checking: {self._format_money(self._checking_balance)} | Saving: {self._format_money(self._saving_balance)}"
+        self._record(entry)
         logging.info(f"Customer {self._customer_number} transferred {self._format_money(amount)} from checking to savings account. New checking balance: {self._format_money(self._checking_balance)}, New savings balance: {self._format_money(self._saving_balance)}")
 
     def calc_saving_transfer(self, amount):
         self._saving_balance -= amount
         self._checking_balance += amount
+        entry = f"Transfer Saving -> Checking | Amount: {self._format_money(amount)} | Saving: {self._format_money(self._saving_balance)} | Checking: {self._format_money(self._checking_balance)}"
+        self._record(entry)
         logging.info(f"Customer {self._customer_number} transferred {self._format_money(amount)} from savings to checking account. New savings balance: {self._format_money(self._saving_balance)}, New checking balance: {self._format_money(self._checking_balance)}")
 
     # ------------------------------------------------------------------

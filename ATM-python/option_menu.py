@@ -40,6 +40,15 @@ class OptionMenu:
         print("Checking Balance: " + self._format_money(acc_type.get_checking_balance()))
         print("Savings Balance: " + self._format_money(acc_type.get_saving_balance()))
 
+    def get_transaction_history(self, acc):
+        history = acc.get_transaction_history()
+        print("\n--- Transaction History ---")
+        if not history:
+            print("No transactions yet.")
+        else:
+            for i, entry in enumerate(history, 1):
+                print(f" {i}. {entry}")
+
     def get_account_type(self, acc):
         while True:
             try:
@@ -47,7 +56,8 @@ class OptionMenu:
                 print(" Type 1 - Checking Account")
                 print(" Type 2 - Savings Account")
                 print(" Type 3 - View Statement")
-                print(" Type 4 - Exit")
+                print(" Type 4 - View Transaction History")
+                print(" Type 5 - Exit")
                 selection = int(input("\nChoice: "))
                 if selection == 1:
                     self.get_checking(acc)
@@ -56,6 +66,8 @@ class OptionMenu:
                 elif selection == 3:
                     self.get_account_statement(acc)
                 elif selection == 4:
+                    self.get_transaction_history(acc)
+                elif selection == 5:
                     return
                 else:
                     print("\nInvalid Choice.")
@@ -154,7 +166,8 @@ class OptionMenu:
             data[str(cst_no)] = {
                 "pin": acc.get_pin_number(),
                 "checking_balance": acc.get_checking_balance(),
-                "saving_balance": acc.get_saving_balance()
+                "saving_balance": acc.get_saving_balance(),
+                "transaction_history": acc.get_transaction_history()
             }
         with open("accounts.json", "w") as f:
             json.dump(data, f)
@@ -171,7 +184,8 @@ class OptionMenu:
                         int(cst_no),
                         acc_data["pin"],
                         acc_data["checking_balance"],
-                        acc_data["saving_balance"]
+                        acc_data["saving_balance"],
+                        acc_data.get("transaction_history", [])
                     )
         except FileNotFoundError:
             print("\nNo existing accounts found. Starting with an empty database.")
