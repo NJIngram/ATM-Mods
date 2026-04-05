@@ -1,3 +1,11 @@
+import logging
+
+logging.basicConfig(
+    filename='atm_transactions.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
 class Account:
     """Represents a bank account with checking and savings balances."""
 
@@ -37,27 +45,33 @@ class Account:
 
     def calc_checking_withdraw(self, amount):
         self._checking_balance -= amount
+        logging.info(f"Customer {self._customer_number} withdrew {self._format_money(amount)} from checking account. New balance: {self._format_money(self._checking_balance)}")
         return self._checking_balance
 
     def calc_saving_withdraw(self, amount):
         self._saving_balance -= amount
+        logging.info(f"Customer {self._customer_number} withdrew {self._format_money(amount)} from savings account. New balance: {self._format_money(self._saving_balance)}")
         return self._saving_balance
 
     def calc_checking_deposit(self, amount):
         self._checking_balance += amount
+        logging.info(f"Customer {self._customer_number} deposited {self._format_money(amount)} into checking account. New balance: {self._format_money(self._checking_balance)}")
         return self._checking_balance
 
     def calc_saving_deposit(self, amount):
         self._saving_balance += amount
+        logging.info(f"Customer {self._customer_number} deposited {self._format_money(amount)} into savings account. New balance: {self._format_money(self._saving_balance)}")
         return self._saving_balance
 
     def calc_check_transfer(self, amount):
         self._checking_balance -= amount
         self._saving_balance += amount
+        logging.info(f"Customer {self._customer_number} transferred {self._format_money(amount)} from checking to savings account. New checking balance: {self._format_money(self._checking_balance)}, New savings balance: {self._format_money(self._saving_balance)}")
 
     def calc_saving_transfer(self, amount):
         self._saving_balance -= amount
         self._checking_balance += amount
+        logging.info(f"Customer {self._customer_number} transferred {self._format_money(amount)} from savings to checking account. New savings balance: {self._format_money(self._saving_balance)}, New checking balance: {self._format_money(self._checking_balance)}")
 
     # ------------------------------------------------------------------
     # Helper
