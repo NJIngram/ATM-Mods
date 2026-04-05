@@ -1,3 +1,5 @@
+import json
+
 from account import Account
 
 
@@ -24,6 +26,7 @@ class OptionMenu:
                     acc = self._data[customer_number]
                     if pin_number == acc.get_pin_number():
                         self.get_account_type(acc)
+                        self.save_accounts()
                         return
                 print("\nWrong Customer Number or Pin Number")
             except ValueError:
@@ -138,17 +141,47 @@ class OptionMenu:
 
         self._data[cst_no] = Account(cst_no, pin)
         print("\nYour new account has been successfully registered!")
+        self.save_accounts()
         print("\nRedirecting to login.............")
         self.get_login()
+
+    #-------------------------------------------------------------------
+    # Save accounts
+    #-------------------------------------------------------------------
+    def save_accounts(self):
+        data = {}
+        for cst_no, acc in self._data.items():
+            data[str(cst_no)] = {
+                "pin": acc.get_pin_number(),
+                "checking_balance": acc.get_checking_balance(),
+                "saving_balance": acc.get_saving_balance()
+            }
+        with open("accounts.json", "w") as f:
+            json.dump(data, f)
+
+    #------------------------------------------------------------------
+    # Load accounts
+    #------------------------------------------------------------------
+    def load_accounts(self):
+        try:
+            with open("accounts.json", "r") as f:
+                data = json.load(f)
+                for cst_no, acc_data in data.items():
+                    self._data[int(cst_no)] = Account(
+                        int(cst_no),
+                        acc_data["pin"],
+                        acc_data["checking_balance"],
+                        acc_data["saving_balance"]
+                    )
+        except FileNotFoundError:
+            print("\nNo existing accounts found. Starting with an empty database.")
 
     # ------------------------------------------------------------------
     # Main Menu Entry Point
     # ------------------------------------------------------------------
 
     def main_menu(self):
-        # Pre-populated test accounts
-        self._data[952141] = Account(952141, 191904, 1000, 5000)
-        self._data[123] = Account(123, 123, 20000, 50000)
+        self.load_accounts()
 
         while True:
             try:
